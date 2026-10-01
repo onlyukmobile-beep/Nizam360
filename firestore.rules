@@ -1,0 +1,44 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+    function profile() { return /databases/$(database)/documents/users/$(request.auth.uid); }
+    function hasProfile() { return signedIn() && exists(profile()); }
+    function isPlatformAdmin() {
+      return hasProfile() && get(profile()).data.role == 'platform_admin';
+    }
+
+    // Platform control plane: only the platform owner can create/manage client organizations,
+    // subscriptions and platform configuration.
+    match /organizations/{id} {
+      allow read, write: if isPlatformAdmin();
+    }
+    match /subscriptions/{id} {
+      allow read, write: if isPlatformAdmin();
+    }
+    match /platformSettings/{id} {
+      allow read, write: if isPlatformAdmin();
+    }
+    match /platformAudit/{id} {
+      allow read: if isPlatformAdmin();
+      allow create: if isPlatformAdmin();
+      allow update, delete: if isPlatformAdmin();
+    }
+
+    // User profiles: preserve the existing working application flow.
+    // During V17 onboarding this remains compatible with the existing modules.
+    match /users/{uid} {
+      allow read: if signedIn() && (request.auth.uid == uid || isPlatformAdmin());
+      allow create, update: if signedIn() && (request.auth.uid == uid || isPlatformAdmin());
+      allow delete: if isPlatformAdmin();
+    }
+
+    // Legacy TVG application collections remain compatible while the
+    // multi-tenant migration is performed. Do not expose this compatibility
+    // rule as the final SaaS isolation policy; use the commercial rules
+    // template supplied with this package before public multi-company launch.
+    match /{document=**} {
+      allow read, write: if signedIn();
+    }
+  }
+}

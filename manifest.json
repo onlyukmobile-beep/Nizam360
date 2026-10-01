@@ -1,0 +1,42 @@
+{
+  "name": "TVG Management",
+  "short_name": "TVG",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": [
+    "standalone",
+    "minimal-ui"
+  ],
+  "orientation": "portrait-primary",
+  "background_color": "#321216",
+  "theme_color": "#3b171b",
+  "description": "TVG employee attendance and workforce management app.",
+  "icons": [
+    {
+      "src": "assets/tvg-icon-180.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/tvg-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/tvg-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "prefer_related_applications": false,
+  "categories": [
+    "business",
+    "productivity"
+  ],
+  "lang": "en"
+}
